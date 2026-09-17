@@ -199,8 +199,9 @@ function renderLibrary() {
   if (!games.length) {
     view.innerHTML = `
       <div class="empty">
+        <img class="em" src="mark-lg.png" alt="" draggable="false">
         <h2>No games yet</h2>
-        <p>Anything you buy on droprate.xyz shows up here.</p>
+        <p>Anything you buy in the Store or on droprate.xyz shows up here.</p>
       </div>`;
     return;
   }

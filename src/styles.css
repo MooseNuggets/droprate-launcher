@@ -65,7 +65,7 @@ header {
   background: linear-gradient(180deg, #101530, var(--void));
   flex: 0 0 auto;
 }
-.mark { width: 20px; height: 24px; flex: 0 0 auto; }
+.mark { width: auto; height: 26px; flex: 0 0 auto; filter: drop-shadow(0 0 10px rgba(255,194,75,.35)); }
 .brand { font-family: var(--display); font-weight: 700; letter-spacing: .13em; font-size: 13px; text-transform: uppercase; }
 .brand b { color: var(--gold); }
 .spacer { flex: 1; }
@@ -279,6 +279,7 @@ main.storefront > * { position: relative; }
 .waiting { font-size: 12px; color: var(--gold); }
 
 .empty { text-align: center; color: var(--dim); padding: 60px 20px; }
+.empty .em { height: 110px; width: auto; margin: 0 auto 18px; display: block; opacity: .9; filter: drop-shadow(0 18px 40px rgba(255,194,75,.25)); }
 .empty h2 { color: var(--ice); font-size: 1.15rem; margin: 0 0 6px; }
 
 .toast {
