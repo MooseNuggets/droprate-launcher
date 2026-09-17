@@ -1,0 +1,63 @@
+# Builds the DropRate desktop app and publishes installers to a GitHub Release.
+#
+# How it fires: push a tag that starts with "v" (e.g. v0.1.0). Nothing else.
+#   git tag v0.1.0 && git push origin v0.1.0
+# About 10–15 minutes later the release appears under the repo's Releases tab
+# with a Windows installer attached. droprate.xyz/download.html reads the latest
+# release from the GitHub API, so the site's download button updates itself.
+#
+# Windows only for now. Uncomment the macOS/Linux lines in the matrix when you
+# want those builds — no other change is needed.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            args: ""
+          # - platform: macos-latest
+          #   args: "--target universal-apple-darwin"
+          # - platform: ubuntu-22.04
+          #   args: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Linux build deps
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - run: npm ci
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "DropRate ${{ github.ref_name }}"
+          releaseBody: "Installers for the DropRate desktop app. Windows: run the .exe. If SmartScreen warns, choose More info → Run anyway (the build is unsigned for now)."
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}

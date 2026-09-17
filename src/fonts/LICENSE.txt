@@ -1,0 +1,6 @@
+Bundled fonts, all under the SIL Open Font License 1.1 (https://openfontlicense.org):
+  Chakra Petch  — Copyright 2018 The Chakra Petch Project Authors (Cadson Demak)
+  Poppins       — Copyright 2020 The Poppins Project Authors (Indian Type Foundry)
+  JetBrains Mono — Copyright 2020 The JetBrains Mono Project Authors
+Subsetted to Latin, woff2, via @fontsource. Shipped with the app so it draws
+itself identically to droprate.xyz without touching the network.

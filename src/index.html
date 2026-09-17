@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DropRate</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <svg class="mark" viewBox="0 0 100 116" aria-hidden="true">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffc24b"/><stop offset="1" stop-color="#e8941b"/></linearGradient></defs>
+      <path fill="url(#g)" d="M50 10c0 6 32 52 32 72a32 32 0 0 1-64 0c0-20 32-66 32-72Z"/>
+    </svg>
+    <span class="brand">DROP<b>RATE</b></span>
+    <nav class="tabs" id="tabs" hidden>
+      <button class="tab is-on" data-view="library">Library</button>
+      <button class="tab" data-view="store">Store</button>
+    </nav>
+    <span class="spacer"></span>
+    <span class="who" id="who" hidden></span>
+    <button class="ghost" id="refresh" hidden>Refresh</button>
+    <button class="ghost dev" id="devportal" hidden title="Manage your games on droprate.xyz">Developer</button>
+    <button class="ghost" id="signout" hidden>Sign out</button>
+  </header>
+  <main id="view"></main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
