@@ -586,7 +586,28 @@ async fn launch_game(app: State<'_, App>, product_id: i64) -> Result<(), String>
     let exe = local
         .exe_path
         .ok_or_else(|| "No runnable file was found in this build.".to_string())?;
-    install::launch(std::path::Path::new(&local.install_dir), &exe).map_err(|e| e.to_string())
+
+    // SDK ticket. Best-effort: offline (or a server hiccup) still launches the
+    // game — it just runs without achievements/saves for this session, which
+    // is the right trade. A 403 is different: the copy was sold, so stop.
+    let mut env: Vec<(&str, String)> = vec![
+        ("DROPRATE_API", "https://droprate.xyz/sdk/v1".to_string()),
+        ("DROPRATE_PRODUCT", product_id.to_string()),
+    ];
+    if let Ok(token) = app.token() {
+        match app.client.ticket(&token, product_id).await {
+            Ok(t) => {
+                env.push(("DROPRATE_TICKET", t.ticket));
+                env.push(("DROPRATE_WALLET", t.wallet));
+            }
+            Err(ApiError::Server { status: 403, message }) => return Err(message),
+            Err(e) => {
+                handle_auth_failure(&app, &e);
+                // no ticket; the game runs as a guest
+            }
+        }
+    }
+    install::launch(std::path::Path::new(&local.install_dir), &exe, &env).map_err(|e| e.to_string())
 }
 
 #[tauri::command]

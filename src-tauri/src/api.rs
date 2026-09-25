@@ -152,6 +152,17 @@ impl Client {
     /// The public storefront. Deliberately unauthenticated — browsing the catalog
     /// is something anyone can do on the website, so the launcher needs no device
     /// token to show it.
+    /// An SDK ticket for one game: the credential the game itself uses for
+    /// achievements, cloud saves and leaderboards. Ownership is re-checked
+    /// server-side, so a 403 means the copy was sold since the last refresh.
+    pub async fn ticket(&self, device_token: &str, product_id: i64) -> ApiResult<Ticket> {
+        self.call(
+            "native-device-ticket",
+            serde_json::json!({ "device_token": device_token, "product_id": product_id }),
+        )
+        .await
+    }
+
     pub async fn market(&self) -> ApiResult<MarketResponse> {
         self.call("native-market", serde_json::json!({})).await
     }
@@ -195,6 +206,14 @@ pub struct DeviceMe {
     pub wallet: String,
     #[serde(default)]
     pub name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Ticket {
+    pub ticket: String,
+    pub wallet: String,
+    pub product_id: i64,
+    pub expires_at: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

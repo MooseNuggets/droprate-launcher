@@ -230,7 +230,7 @@ fn extract_zip(archive: &Path, dest: &Path) -> Result<Vec<String>, InstallError>
 
 /// Starts the game and returns immediately. The launcher does not babysit the
 /// process — closing the launcher should not kill someone's game.
-pub fn launch(install_dir: &Path, exe_rel: &str) -> Result<(), InstallError> {
+pub fn launch(install_dir: &Path, exe_rel: &str, env: &[(&str, String)]) -> Result<(), InstallError> {
     let Some(exe) = safe_join(install_dir, exe_rel) else {
         return Err(InstallError::Io("recorded executable path is invalid".into()));
     };
@@ -244,6 +244,12 @@ pub fn launch(install_dir: &Path, exe_rel: &str) -> Result<(), InstallError> {
     // Games routinely load assets by relative path; launching from anywhere else
     // makes them fail in confusing ways.
     cmd.current_dir(exe.parent().unwrap_or(install_dir));
+    // The SDK handshake: the game reads these to talk to droprate.xyz as this
+    // player. The ticket is short-lived and scoped to this one game, so it is
+    // safe to hand over; the device token never leaves the launcher.
+    for (k, v) in env {
+        cmd.env(k, v);
+    }
 
     cmd.spawn().map_err(|e| InstallError::Io(e.to_string()))?;
     Ok(())
