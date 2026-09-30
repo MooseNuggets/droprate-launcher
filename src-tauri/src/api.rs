@@ -240,6 +240,11 @@ pub struct LibraryGame {
     pub asset_address: Option<String>,
     /// Chain-verified server-side. False means the copy was sold or transferred.
     pub owned: bool,
+    /// Rented rather than owned: access ends at `rental_expires_at` (ISO 8601).
+    #[serde(default)]
+    pub rented: bool,
+    #[serde(default)]
+    pub rental_expires_at: Option<String>,
     #[serde(default)]
     pub build_version: i64,
     #[serde(default)]

@@ -12,6 +12,12 @@ const { listen } = window.__TAURI__.event;
 const $ = (id) => document.getElementById(id);
 const view = $("view");
 
+function rentedLabel(iso) {
+  const ms = new Date(iso).getTime() - Date.now();
+  if (!(ms > 0)) return "Rental over";
+  const d = Math.ceil(ms / 86400e3);
+  return d <= 1 ? "Rented · last day" : `Rented · ${d} days left`;
+}
 const esc = (s) =>
   String(s ?? "").replace(/[<>&"']/g, (c) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -169,6 +175,7 @@ function cardFor(g) {
 
   const sub = [
     g.copy_number ? `Copy #${g.copy_number}` : null,
+    g.rented ? rentedLabel(g.rental_expires_at) : null,
     g.installed ? `v${g.installed_version}` : null,
   ].filter(Boolean).join(" · ");
 
